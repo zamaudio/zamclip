@@ -1,0 +1,70 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix doap: <http://usefulinc.com/ns/doap#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix pg: <http://lv2plug.in/ns/ext/port-groups#>.
+@prefix ue: <http://lv2plug.in/ns/extensions/units#>.
+
+<http://zamaudio.com/lv2/zamclip>
+	a lv2:Plugin;
+	a lv2:DynamicsPlugin;
+
+	lv2:binary <zamclip.so>;
+	doap:name "ZamClip";
+	doap:maintainer [
+		foaf:name "Damien Zammit";
+		foaf:homepage <http://zamaudio.com>;
+		foaf:mbox <mailto:damien@zamaudio.com>;
+		];
+	doap:license <http://usefulinc.com/doap/licenses/gpl>;
+	lv2:optionalFeature lv2:hardRTCapable ;
+	lv2:minorVersion 2 ;
+	lv2:microVersion 1 ;
+  
+lv2:port [
+	a lv2:AudioPort, lv2:InputPort;
+	lv2:index 0;
+	lv2:symbol "input";
+	lv2:name "Input";
+	],
+
+	[
+	a lv2:AudioPort, lv2:OutputPort;
+	lv2:index 1;
+	lv2:symbol "output";
+	lv2:name "Output";
+	],
+
+	[
+	a lv2:ControlPort, lv2:InputPort ;
+	lv2:index 2;
+	lv2:symbol "springmass";
+	lv2:name "Spring strength";
+	lv2:minimum 0.01 ;
+	lv2:maximum 0.4 ;
+	lv2:default 0.4 ;
+	],
+
+	[
+	a lv2:ControlPort, lv2:InputPort ;
+	lv2:index 3;
+	lv2:symbol "threshold";
+	lv2:name "Threshold";
+	lv2:minimum 0.5 ;
+	lv2:maximum 1.0 ;
+	lv2:default 0.9 ;
+	],
+
+	[
+	a lv2:ControlPort, lv2:OutputPort;
+	lv2:index 4;
+	lv2:symbol "gain";
+	lv2:name "Output reduction";
+	lv2:minimum 0.0 ;
+	lv2:maximum 0.5 ;
+	lv2:default 0.0 ;
+	lv2:scalePoint [ rdfs:label "0"; rdf:value 0 ] ;
+	lv2:scalePoint [ rdfs:label "1/4"; rdf:value 0.25 ] ;
+	lv2:scalePoint [ rdfs:label "1/2"; rdf:value 0.5 ] ;
+	].

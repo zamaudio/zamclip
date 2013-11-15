@@ -1,7 +1,7 @@
 zamclip
 =======
 
-ZamClip - LV2 Soft clipper
+ZamClip - LV2 lookahead soft clipper
 
 This is a soft clipper plugin that adds subtle limiting to a mix.
 Feel free to leave comments on my blog as all feedback is appreciated.

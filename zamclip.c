@@ -137,7 +137,7 @@ run(LV2_Handle instance, uint32_t n_samples)
 	double xm = (p0+thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 	double one = (thresh)*cos(sqkm);
 	output[0] = (input[0] > thresh) ? xp + thresh : (input[0] < -thresh) ? xm - thresh : input[0];
-	output[0] *= fabs(one);
+	//output[0] *= fabs(one);
 		
 	for (uint32_t i = 1; i < n_samples; ++i) {
 		p0 = input[i-1];
@@ -145,7 +145,7 @@ run(LV2_Handle instance, uint32_t n_samples)
 		xp = (p0-thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 		xm = (p0+thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 		output[i] = (input[i] > thresh) ? xp + thresh : (input[i] < -thresh) ? xm - thresh : input[i];; 
-		output[i] *= fabs(one);
+		//output[i] *= fabs(one);
 	}
  	zamclip->lastsample = input[n_samples-1]; 
 }

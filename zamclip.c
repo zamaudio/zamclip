@@ -30,8 +30,7 @@ typedef enum {
 	ZAMCLIP_OUTPUT = 1,
 
 	ZAMCLIP_SPRINGMASS = 2,
- 	ZAMCLIP_THRESH = 3, 
-	ZAMCLIP_GAINR = 4
+ 	ZAMCLIP_THRESH = 3 
 } PortIndex;
 
 
@@ -82,9 +81,6 @@ connect_port(LV2_Handle instance,
 	case ZAMCLIP_THRESH:
 		zamclip->thresh = (float*)data;
 	break;
-	case ZAMCLIP_GAINR:
-		zamclip->gainr = (float*)data;
-	break;
 	}
   
 }
@@ -132,7 +128,6 @@ run(LV2_Handle instance, uint32_t n_samples)
 	float* const output = zamclip->output;
   
 	float springmass = *(zamclip->springmass);
-	float* const gainr = zamclip->gainr;
 	float sqkm = sqrt(springmass);
 	float thresh = *(zamclip->thresh);
 
@@ -151,7 +146,6 @@ run(LV2_Handle instance, uint32_t n_samples)
 		xm = (p0+thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 		output[i] = (input[i] > thresh) ? xp + thresh : (input[i] < -thresh) ? xm - thresh : input[i];; 
 		output[i] *= fabs(one);
-		*gainr = fabs(input[i] > thresh) ? fabs(one) : 0.f;
 	}
  	zamclip->lastsample = input[n_samples-1]; 
 }

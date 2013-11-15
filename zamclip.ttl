@@ -54,17 +54,4 @@ lv2:port [
 	lv2:minimum 0.5 ;
 	lv2:maximum 1.0 ;
 	lv2:default 1.0 ;
-	],
-
-	[
-	a lv2:ControlPort, lv2:OutputPort;
-	lv2:index 4;
-	lv2:symbol "gain";
-	lv2:name "Output reduction";
-	lv2:minimum 0.0 ;
-	lv2:maximum 0.5 ;
-	lv2:default 0.0 ;
-	lv2:scalePoint [ rdfs:label "0"; rdf:value 0 ] ;
-	lv2:scalePoint [ rdfs:label "1/4"; rdf:value 0.25 ] ;
-	lv2:scalePoint [ rdfs:label "1/2"; rdf:value 0.5 ] ;
 	].

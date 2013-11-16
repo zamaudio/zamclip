@@ -30,7 +30,9 @@ typedef enum {
 	ZAMCLIP_OUTPUT = 1,
 
 	ZAMCLIP_SPRINGMASS = 2,
- 	ZAMCLIP_THRESH = 3 
+ 	ZAMCLIP_THRESH = 3, 
+ 	ZAMCLIP_GAINR = 4
+
 } PortIndex;
 
 
@@ -44,7 +46,10 @@ typedef struct {
  
 	float srate;
 	float lastsample;
-  
+	float oldgainr;
+	int halfsecond;
+	float maxgain;
+	
 } ZamCLIP;
 
 static LV2_Handle
@@ -57,6 +62,7 @@ instantiate(const LV2_Descriptor* descriptor,
 	zamclip->srate = rate;
   
 	zamclip->lastsample = 0.f;
+	zamclip->oldgainr = 0.f;
 
 	return (LV2_Handle)zamclip;
 }
@@ -80,6 +86,9 @@ connect_port(LV2_Handle instance,
 	break;
 	case ZAMCLIP_THRESH:
 		zamclip->thresh = (float*)data;
+	break;
+	case ZAMCLIP_GAINR:
+		zamclip->gainr = (float*)data;
 	break;
 	}
   
@@ -126,26 +135,45 @@ run(LV2_Handle instance, uint32_t n_samples)
   
 	const float* const input = zamclip->input;
 	float* const output = zamclip->output;
-  
+  	float* const gainr = zamclip->gainr;
+
 	float springmass = *(zamclip->springmass);
 	float sqkm = sqrt(springmass);
-	float thresh = *(zamclip->thresh);
+	float thresh = from_dB(*(zamclip->thresh));
+	float srate = zamclip->srate;
 
 	double p0 = zamclip->lastsample;
 	double v0 = (input[0] - p0);
 	double xp = (p0-thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 	double xm = (p0+thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
-	double one = (thresh)*cos(sqkm);
+	float tmpgain = 0.f;
+	float tmp = 0.f;
+
 	output[0] = (input[0] > thresh) ? xp + thresh : (input[0] < -thresh) ? xm - thresh : input[0];
-	//output[0] *= fabs(one);
-		
+	zamclip->halfsecond++;
+
 	for (uint32_t i = 1; i < n_samples; ++i) {
 		p0 = input[i-1];
 		v0 = (input[i] - p0);
 		xp = (p0-thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 		xm = (p0+thresh)*cos(sqkm) + 1.f/sqkm*v0*sin(sqkm);
 		output[i] = (input[i] > thresh) ? xp + thresh : (input[i] < -thresh) ? xm - thresh : input[i];; 
-		//output[i] *= fabs(one);
+		tmpgain = (input[i] > thresh) ? fabs(xp+thresh) : (input[i] < -thresh) ? fabs(xm-thresh) : 0.f;
+		if (zamclip->halfsecond > srate/8) {
+			zamclip->halfsecond = 0;
+			tmp = to_dB(tmpgain);
+			sanitize_denormal(tmp);
+			*gainr = (tmp < -100) ? 0.f : tmp;
+			zamclip->maxgain = 0.f;
+		} else {
+			if (tmpgain > zamclip->maxgain) {
+				zamclip->maxgain = tmpgain;
+			}
+			tmp = to_dB(zamclip->maxgain);
+			sanitize_denormal(tmp);
+			*gainr = (tmp < -100) ? 0.f : tmp;
+		}
+		zamclip->halfsecond++;
 	}
  	zamclip->lastsample = input[n_samples-1]; 
 }

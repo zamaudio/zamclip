@@ -40,7 +40,7 @@ lv2:port [
 	a lv2:ControlPort, lv2:InputPort ;
 	lv2:index 2;
 	lv2:symbol "springmass";
-	lv2:name "Spring strength";
+	lv2:name "Wave squash parameter";
 	lv2:minimum 0.01 ;
 	lv2:maximum 0.4 ;
 	lv2:default 0.4 ;
@@ -50,8 +50,21 @@ lv2:port [
 	a lv2:ControlPort, lv2:InputPort ;
 	lv2:index 3;
 	lv2:symbol "threshold";
-	lv2:name "Threshold";
-	lv2:minimum 0.5 ;
-	lv2:maximum 1.0 ;
-	lv2:default 1.0 ;
+	lv2:name "Threshold (dB)";
+	lv2:minimum -12.0 ;
+	lv2:maximum -0.008 ;
+	lv2:default -0.008 ;
+	],
+	
+	[
+	a lv2:ControlPort, lv2:OutputPort ;
+	lv2:index 4;
+	lv2:symbol "gainr";
+	lv2:name "Max Wave Squash (dB)";
+	lv2:minimum -12.0 ;
+	lv2:maximum 0.0 ;
+	lv2:default 0.0 ;
+	lv2:scalePoint [ rdfs:label "-12"; rdf:value -12 ] ;
+	lv2:scalePoint [ rdfs:label "-6"; rdf:value -6 ] ;
+	lv2:scalePoint [ rdfs:label "0"; rdf:value 0 ] ;
 	].
